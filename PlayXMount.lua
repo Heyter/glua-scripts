@@ -1,0 +1,20 @@
+local playx = _858
+if IsValid(fpmblock) then fpmblock:Remove() end
+fpmblock = create'models/hunter/blocks/cube025x025x025.mdl'
+playx:SetSolid(0)
+fpmblock:SetSolid(0)
+playx:SetModel("models/hunter/blocks/cube025x025x025.mdl")
+playx:SetMaterial("models/ihvtest/eyeball_l")
+fpmblock:SetMaterial("models/ihvtest/eyeball_l")
+playx:SetModelScale(-1,0)
+--fpmblock:SetModelScale(0.5,0)
+playx:SetColor(color_black)
+hook.Add("Think","Flex_PlayXMount",function()
+	local spin = (RealTime()*100%360)
+	playx:SetPos(me:GetBonePosition(me:LookupBone("ValveBiped.Bip01_Head1"))+Vector(0,0,30))
+	fpmblock:SetPos(me:GetBonePosition(me:LookupBone("ValveBiped.Bip01_Head1"))+Vector(0,0,30))
+	fpmblock:SetColor(HSVToColor(spin,1,1))
+	playx:SetAngles(Angle(spin,spin,spin))
+	fpmblock:SetAngles(Angle(spin,spin,spin))
+	fpmblock:SetModelScale(math.sin(spin)*0.5,0)
+end)
