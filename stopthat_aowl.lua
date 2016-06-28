@@ -48,13 +48,13 @@ aowl.AddCommand("stopthat",function(ply,target)
 
 				local e=ents.Create'env_entity_dissolver'
 				e:SetKeyValue("target","dissolvemenao"..tostring(ent:EntIndex()))
-				e:SetKeyValue("dissolvetype","1")
+				e:SetKeyValue("dissolvetype","3")
 				e:Spawn()
 				e:Activate()
 				e:Fire("Dissolve",ent:GetName(),0)
 				SafeRemoveEntityDelayed(e,0.1)
 				timer.Simple(0.5,function()
-					if !v:IsPlayer() then return end
+					if not v:IsPlayer() then return end
 					v:ConCommand("cl_dmg_mode 1")
 				end)
 			end

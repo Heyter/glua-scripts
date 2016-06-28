@@ -6,6 +6,13 @@ local tag = "Color(0,150,130),'[',Color(0,140,121),'F',Color(0,130,113),'l',Colo
 
 luadev.RunOnClients("CreateClientConVar(\"flexnp_showinchat\",1,true,true) chat.AddText("..tag.."color_white,'FlexNP is now active, do ',Color(255,0,0),'flexnp_showinchat 0 ',color_white,'to disable.')")
 
+concommand.Add("flexnp_say",function()
+    local npshort = file.Read("nowplaying.txt","DATA")
+    np = npshort
+    np = string.gsub(np,"  np: ","")
+    Say("<color=0,150,130>Now Playing: <color=255,255,255>"..np)
+end)
+
 local np = file.Read("nowplaying.txt","DATA")
 np = string.gsub(np,"  np: ","")
 local oldnp = np
@@ -14,11 +21,9 @@ hook.Add("Think","npupdate",function()
         local npshort = file.Read("nowplaying.txt","DATA")
         np = npshort
         np = string.gsub(np,"  np: ","")
-        np = string.gsub(np,"'","")
         if oldnp != np then
             np = npshort
             np = string.gsub(np,"  np: ","")
-            np = string.gsub(np,"'","")
             oldnp = np
             if fnp_title:GetInt() == 1 then
                 me:SetCustomTitle(np)

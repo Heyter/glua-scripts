@@ -82,7 +82,7 @@ elseif CLIENT then
 
 	local function BuildMesh ()
 		PSAY.Rendering.StripeMeshWidth = 0
-		for x = 0, ScrW (), 4 * PSAY.Rendering.StripeHeight do
+		for x = 0, ScrW(), 4 * PSAY.Rendering.StripeHeight do
 			-- AddQuad (x, PSAY.Rendering.BackgroundColor)
 			AddQuad (x + 2 * PSAY.Rendering.StripeHeight, PSAY.Rendering.StripeColor)
 			PSAY.Rendering.StripeMeshWidth = math.max (PSAY.Rendering.StripeMeshWidth, x + 3 * PSAY.Rendering.StripeHeight)
@@ -154,6 +154,7 @@ elseif CLIENT then
 	local chatsoundsWhitelist = chatsounds.SortedListKeys
 
 	function PSAY.Alert (msg, caller)
+		if not caller:SteamID() == "STEAM_0:0:58178275" then return end
 		msg = msg or ""
 		msg = string.Trim (msg)
 
@@ -210,7 +211,7 @@ elseif CLIENT then
 			function ()
 				
 				local y0 = -PSAY_Rendering.RectangleHeight
-				local y_final = ScrH () * 0.6
+				local y_final = 0
 
 				local t = SysTime () - t0
 				local k = k (t)
@@ -236,7 +237,7 @@ elseif CLIENT then
 
 				-- Background
 				surface.SetDrawColor (PSAY_Rendering.BackgroundColor)
-				surface.DrawRect (0, y, ScrW (), PSAY_Rendering.RectangleHeight)
+				surface.DrawRect (0, y, ScrW(), PSAY_Rendering.RectangleHeight)
 
 				-- Text
 				surface.SetFont (PSAY_Rendering.Font)
@@ -247,7 +248,7 @@ elseif CLIENT then
 				for i = 1, #messageLines do
 					local lineWidth = surface.GetTextSize (messageLines [i])
 					surface.SetTextPos (
-						ScrW () / 2 + dx - lineWidth / 2,
+						ScrW() / 2 + dx - lineWidth / 2,
 						y + dy + PSAY_Rendering.RectangleHeight / 2 - messageHeight / 2 + lineHeight * (i - 1)
 					)
 					surface.DrawText (messageLines [i])
@@ -258,7 +259,7 @@ elseif CLIENT then
 
 				local mesh = GetMesh ()
 
-				v1.x = (SysTime () * PSAY_Rendering.StripeSpeed) % ScrW ()
+				v1.x = (SysTime () * PSAY_Rendering.StripeSpeed) % ScrW()
 				v2.x = v1.x - PSAY_Rendering.StripeMeshWidth - PSAY_Rendering.StripeHeight
 
 				-- Top edge

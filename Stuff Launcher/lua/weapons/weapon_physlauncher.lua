@@ -2,10 +2,12 @@ AddCSLuaFile()
 
 easylua.StartWeapon("weapon_physlauncher") --testing
 
+SWEP.Base 				= "weapon_base"
 SWEP.PrintName			= "Stuff Launcher"
 SWEP.Author				= "Flex"
 SWEP.Purpose 			= "Based on weapon from <color=0,128,255>SMOD Redux</color>"
 SWEP.Contact 			= ""
+SWEP.Instructions 		= ""
 SWEP.Warnings			= "<color=200,200,100> \xe2\x97\x8f 5 second delete delay added to prevent spam and crashes</color>\n\n<color=200,200,100> \xe2\x97\x8f I (Flex) am</color> <color=200,100,100>NOT</color> <color=200,200,100>responsible for crashes caused by this weapon</color>\n\n<color=200,200,100> \xe2\x97\x8f If crashes commonly occur, uninstall this addon</color>"
 SWEP.Controls 			= "<color=100,200,100> \xe2\x97\x8f Left Click:</color> Fire object\n\n<color=100,200,100> \xe2\x97\x8f Right Click:</color> Set object to what you're looking at\n\n<color=200,100,100> \xe2\x97\x8f Use + Right Click:</color> Ignite mode toggle <color=100,200,100>(Custom Feature)</color>\n\n<color=200,100,100> \xe2\x97\x8f Use + Left Click:</color> Fire 10 objects at once <color=100,200,100>(Custom Feature)</color>"
 SWEP.Category			= "Flex's Weapons"

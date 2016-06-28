@@ -2,10 +2,12 @@ AddCSLuaFile()
 
 easylua.StartWeapon("weapon_physlauncher_admin") --testing
 
+SWEP.Base 				= "weapon_base"
 SWEP.PrintName			= "Stuff Launcher (No Removal)"
 SWEP.Author				= "Flex"
 SWEP.Purpose 			= "Based on weapon from <color=0,128,255>SMOD Redux</color>"
 SWEP.Contact 			= ""
+SWEP.Instructions 		= ""
 SWEP.Warnings			= "<color=200,200,100> \xe2\x97\x8f I (Flex) am</color> <color=200,100,100>NOT</color> <color=200,200,100>responsible for crashes caused by this weapon</color>\n\n<color=200,200,100> \xe2\x97\x8f If crashes commonly occur, uninstall this addon</color>"
 SWEP.Controls 			= "<color=100,200,100> \xe2\x97\x8f Left Click:</color> Fire object\n\n<color=100,200,100> \xe2\x97\x8f Right Click:</color> Set object to what you're looking at\n\n<color=200,100,100> \xe2\x97\x8f Use + Right Click:</color> Ignite mode toggle <color=100,200,100>(Custom Feature)</color>\n\n<color=200,100,100> \xe2\x97\x8f Use + Left Click:</color> Fire 10 objects at once <color=100,200,100>(Custom Feature)</color>"
 SWEP.Category			= "Flex's Weapons"
@@ -35,6 +37,7 @@ SWEP.Secondary.Ammo		= "none"
 
 SWEP.stuffClass 		= "prop_physics"
 SWEP.stuffModel			= "models/props_junk/watermelon01.mdl"
+SWEP.stuffKeys			= {}
 SWEP.stuffIgnite 		= false
 
 SWEP.Sounds = {}
@@ -120,9 +123,7 @@ function SWEP:PrimaryAttack()
 
 			stuff:SetOwner(self.Owner)
 			stuff:SetPhysicsAttacker(self.Owner)
-			for key,val in pairs(self.stuffKeys) do
-				stuff:SetKeyValue(tostring(key),val)
-			end
+			if stuff.SpawnFunction then stuff:SpawnFunction() end
 			stuff:Spawn()
 			stuff:Activate()
 			stuff:SetSolid(2)
@@ -139,6 +140,7 @@ function SWEP:PrimaryAttack()
 		if self.Owner:KeyDown(IN_USE) then
 			for i = 1,10 do
 				timer.Create("stuffX10",0.075,i,function()
+
 					self.Weapon:SendWeaponAnim(ACT_VM_PRIMARYATTACK)
 					self.Weapon:EmitSound(self.Sounds.Fire)
 
@@ -156,9 +158,7 @@ function SWEP:PrimaryAttack()
 
 					stuff:SetOwner(self.Owner)
 					stuff:SetPhysicsAttacker(self.Owner)
-					for key,val in pairs(self.stuffKeys) do
-						stuff:SetKeyValue(tostring(key),val)
-					end
+					if stuff.SpawnFunction then stuff:SpawnFunction(self.Owner,nil) end
 					stuff:Spawn()
 					stuff:Activate()
 					stuff:SetSolid(2)
@@ -185,35 +185,39 @@ function SWEP:SecondaryAttack()
 			self.stuffIgnite = true
 			self.Owner:PrintMessage(3,"Ignite mode: ON.")
 		end
-		self.Weapon:EmitSound("weapons/pistol/pistol_empty.wav")
-		self.Weapon:SendWeaponAnim(ACT_VM_RELOAD)
+		if CLIENT then
+			self.Weapon:EmitSound("weapons/pistol/pistol_empty.wav")
+			self.Weapon:SendWeaponAnim(ACT_VM_RELOAD)
+		end
 	end
 
-	local trace = util.QuickTrace(self.Owner:EyePos(), self.Owner:GetAimVector() * 10000, {self.Owner, self.Owner:GetVehicle()})
-	if !trace and !trace.Entity then return end
-	if trace.Entity:IsPlayer() then return end
-	if IsValid(trace.Entity) then
-		if !self.Owner:KeyDown(IN_USE) then
-			self.Weapon:SendWeaponAnim(ACT_VM_PRIMARYATTACK)
-			self.Weapon:EmitSound("weapons/physcannon/physcannon_charge.wav")
-			self.stuffClass = trace.Entity.ClassName and trace.Entity.ClassName or "prop_physics"
-			self.stuffModel = trace.Entity:GetModel()
+	if SERVER then
+		local trace = util.QuickTrace(self.Owner:EyePos(), self.Owner:GetAimVector() * 10000, {self.Owner, self.Owner:GetVehicle()})
+		if !trace and !trace.Entity then return end
+		if trace.Entity:IsPlayer() then return end
+		if IsValid(trace.Entity) then
+			if !self.Owner:KeyDown(IN_USE) then
+				self.Weapon:SendWeaponAnim(ACT_VM_PRIMARYATTACK)
+				self.Weapon:EmitSound("weapons/physcannon/physcannon_charge.wav")
+				self.stuffClass = trace.Entity:GetClass() or "prop_physics"
+				self.stuffModel = trace.Entity:GetModel()
 
-			local ent = trace.Entity
-			if not IsValid(ent) then return end
-			ent:SetName("dissolveprop_"..tostring(ent:EntIndex()))
+				local ent = trace.Entity
+				if not IsValid(ent) then return end
+				ent:SetName("dissolveprop_"..tostring(ent:EntIndex()))
 
-			local e=ents.Create'env_entity_dissolver'
-			e:SetKeyValue("target","dissolveprop_"..tostring(ent:EntIndex()))
-			e:SetKeyValue("dissolvetype","1")
-			e:Spawn()
-			e:Activate()
-			e:Fire("Dissolve",ent:GetName(),0)
-			SafeRemoveEntityDelayed(e,0.1)
+				local e=ents.Create'env_entity_dissolver'
+				e:SetKeyValue("target","dissolveprop_"..tostring(ent:EntIndex()))
+				e:SetKeyValue("dissolvetype","1")
+				e:Spawn()
+				e:Activate()
+				e:Fire("Dissolve",ent:GetName(),0)
+				SafeRemoveEntityDelayed(e,0.1)
 
-			timer.Simple(0,function()
-				self.Owner:PrintMessage(3,"Stuff Launcher class set to "..self.stuffClass.." with model: "..self.stuffModel)
-			end)
+				timer.Simple(0,function()
+					self.Owner:PrintMessage(3,"Stuff Launcher class set to "..self.stuffClass.." with model: "..self.stuffModel)
+				end)
+			end
 		end
 	end
 end
